@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:myloginapp/home.dart';
 import 'package:myloginapp/schoolicon_icons.dart';
 import 'package:myloginapp/signup.dart';
+import 'package:logger/logger.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -11,6 +15,39 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final Logger logger = Logger();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  Future<void> _login(BuildContext context) async {
+    try {
+      final url = Uri.parse('https://dummyjson.com/auth/login');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'username': emailController.text,
+          'password': passwordController.text,
+          // 'expiresInMins': 60, // optional
+        }),
+      );
+
+      final responseBody = jsonDecode(response.body);
+      logger.d(responseBody);
+      MaterialPageRoute routehome =
+          MaterialPageRoute(builder: (context) => GomokuGame());
+      Navigator.pushReplacement(context, routehome);
+      // Login successful, navigate to the next screen
+      // Navigator.pushReplacementNamed(context, '/home');
+    } catch (e) {
+      // Handle login error
+      logger.d('Login failed: $e');
+    }
+  }
+
   get children => null;
 
   @override
@@ -21,12 +58,12 @@ class _LoginState extends State<Login> {
             child: Column(
           children: <Widget>[
             Container(
-              padding: EdgeInsets.only(
+              padding: const EdgeInsets.only(
                   top: 90.0, bottom: 20.0, left: 50.0, right: 50.0),
               child: Center(
                 child: Container(
-                  padding: EdgeInsets.only(top: 25.0, right: 5.0),
-                  child: Column(
+                  padding: const EdgeInsets.only(top: 25.0, right: 5.0),
+                  child: const Column(
                     children: [
                       Icon(
                         Schoolicon.graduation,
@@ -53,7 +90,7 @@ class _LoginState extends State<Login> {
               ),
             ),
             Container(
-                padding: EdgeInsets.symmetric(horizontal: 25),
+                padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: Column(children: [
                   Row(
                     children: [
@@ -71,6 +108,7 @@ class _LoginState extends State<Login> {
                     ],
                   ),
                   TextField(
+                      controller: emailController,
                       decoration: InputDecoration(
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey),
@@ -79,11 +117,11 @@ class _LoginState extends State<Login> {
                           hintText: 'example@gmail.com',
                           hintStyle: TextStyle(color: Colors.grey))),
                 ])),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             Container(
                 padding: EdgeInsets.symmetric(horizontal: 25),
                 child: Column(children: [
-                  Row(
+                  const Row(
                     children: [
                       Icon(
                         Icons.lock,
@@ -99,17 +137,19 @@ class _LoginState extends State<Login> {
                     ],
                   ),
                   TextField(
+                    controller: passwordController,
                     decoration: InputDecoration(
                       enabledBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey),
                       ),
                     ),
+                    obscureText: true,
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 180, top: 20),
+                    padding: const EdgeInsets.only(left: 180, top: 20),
                     child: TextButton(
                         onPressed: () {},
-                        child: Text(
+                        child: const Text(
                           "Forgot Password?",
                           style: TextStyle(color: Colors.white),
                         )),
@@ -130,13 +170,20 @@ class _LoginState extends State<Login> {
                     shape: MaterialStateProperty.all(RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0)))),
                 child: const Text('Login'),
-                onPressed: () {},
+                onPressed: () {
+                  _login(context);
+                  // final email = emailController.text;
+                  // final pass = passwordController.text;
+
+                  // // Log the email value
+                  // logger.d('Email: $email,Pass: $pass');
+                },
               ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   "New user?",
                   style: TextStyle(color: Colors.white),
                 ),
@@ -146,7 +193,7 @@ class _LoginState extends State<Login> {
                           MaterialPageRoute(builder: (context) => Signup());
                       Navigator.pushReplacement(context, route);
                     },
-                    child: Text("Sign Up")),
+                    child: const Text("Sign Up")),
               ],
             )
           ],

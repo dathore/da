@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:myloginapp/home.dart';
 import 'login.dart';
 
 void main() {
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
         textTheme: Typography(platform: TargetPlatform.iOS).white,
       ),
       debugShowCheckedModeBanner: false,
-      home: const Login(),
+      home: GomokuGame(),
     );
   }
 }
