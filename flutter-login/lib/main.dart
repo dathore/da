@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:myloginapp/home.dart';
+import 'package:myloginapp/navbar.dart';
 import 'login.dart';
 
 void main() {
@@ -20,7 +22,7 @@ class MyApp extends StatelessWidget {
         textTheme: Typography(platform: TargetPlatform.iOS).white,
       ),
       debugShowCheckedModeBanner: false,
-      home: Login(),
+      home: BottomNavigationBarExample(),
     );
   }
 }

@@ -1,7 +1,4 @@
-import 'dart:js_interop';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:myloginapp/home.dart';
 import 'package:myloginapp/schoolicon_icons.dart';
@@ -19,21 +16,14 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final Logger logger = Logger();
-  bool isPasswordVisible = true;
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  get storage => null;
-  void _toggleObscured() {
-    setState(() {
-      isPasswordVisible = !isPasswordVisible;
-    });
-  }
-
   Future<void> _login(BuildContext context) async {
     try {
-      var url = Uri.parse('https://dummyjson.com/auth/login');
-      var response = await http.post(
+      final url = Uri.parse('https://dummyjson.com/auth/login');
+
+      final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
@@ -44,26 +34,12 @@ class _LoginState extends State<Login> {
           // 'expiresInMins': 60, // optional
         }),
       );
-// username: 'kminchelle',
-      // password: '0lelplR',['token']
-      // ignore: unnecessary_null_comparison, unrelated_type_equality_checks
 
-      final dataBody = jsonDecode(response.body);
-      const storage = FlutterSecureStorage();
-      await storage.write(key: "jwt", value: dataBody['token']);
-      // logger.d("test:$jwt");
-
-// logger.d("test:$jwt");
-      //   Navigator.push(context,
-      //       MaterialPageRoute(builder: (context) => Home.fromBase64(jwt)));
-      // } else {
-      // logger.e(context);
-      // displayDialog(context, "An Error Occurred",
-      //     "No account was found matching that username and password");
-      // }
-      // MaterialPageRoute routehome =
-      //     MaterialPageRoute(builder: (context) => Home());
-      // Navigator.pushReplacement(context, routehome);
+      final responseBody = jsonDecode(response.body);
+      logger.d(responseBody);
+      MaterialPageRoute routehome =
+          MaterialPageRoute(builder: (context) => GomokuGame());
+      Navigator.pushReplacement(context, routehome);
       // Login successful, navigate to the next screen
       // Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
@@ -116,7 +92,7 @@ class _LoginState extends State<Login> {
             Container(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: Column(children: [
-                  const Row(
+                  Row(
                     children: [
                       Icon(
                         Icons.email,
@@ -133,7 +109,7 @@ class _LoginState extends State<Login> {
                   ),
                   TextField(
                       controller: emailController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey),
                           ),
@@ -143,7 +119,7 @@ class _LoginState extends State<Login> {
                 ])),
             const SizedBox(height: 15),
             Container(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
+                padding: EdgeInsets.symmetric(horizontal: 25),
                 child: Column(children: [
                   const Row(
                     children: [
@@ -160,21 +136,14 @@ class _LoginState extends State<Login> {
                       ),
                     ],
                   ),
-                  TextFormField(
+                  TextField(
                     controller: passwordController,
                     decoration: InputDecoration(
-                        enabledBorder: const UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                        suffixIcon: IconButton(
-                          icon: Icon(isPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off),
-                          onPressed: () {
-                            _toggleObscured();
-                          },
-                        )),
-                    obscureText: isPasswordVisible,
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                    ),
+                    obscureText: true,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 180, top: 20),
@@ -203,6 +172,11 @@ class _LoginState extends State<Login> {
                 child: const Text('Login'),
                 onPressed: () {
                   _login(context);
+                  // final email = emailController.text;
+                  // final pass = passwordController.text;
+
+                  // // Log the email value
+                  // logger.d('Email: $email,Pass: $pass');
                 },
               ),
             ),
@@ -215,8 +189,8 @@ class _LoginState extends State<Login> {
                 ),
                 TextButton(
                     onPressed: () {
-                      MaterialPageRoute route = MaterialPageRoute(
-                          builder: (context) => const Signup());
+                      MaterialPageRoute route =
+                          MaterialPageRoute(builder: (context) => Signup());
                       Navigator.pushReplacement(context, route);
                     },
                     child: const Text("Sign Up")),
@@ -227,6 +201,4 @@ class _LoginState extends State<Login> {
       ),
     );
   }
-
-  void displayDialog(BuildContext context, String s, String t) {}
 }
